@@ -1,8 +1,7 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Group, Circle, Text } from 'react-konva';
 
-export default function State({ number }) {
-  const [position, setPosition] = useState({ x: 50, y: 50 });
+export default function Node({ position, number, setPosition }) {
 
   const textRef = useRef(null);
 
@@ -33,7 +32,7 @@ export default function State({ number }) {
         fontFamily='Gothic A1'
         fontSize={14}
         align='center'
-        text='q'
+        text={`q${number}`}
         fill='#282c34'
         verticalAlign='middle'
       />

@@ -1,31 +1,37 @@
 import './App.css';
 import { useReducer } from 'react';
 import { Stage, Layer } from 'react-konva';
-import State from './State';
-import StateArrow from './StateArrow';
+import Node from './Node';
+import NodeArrow from './NodeArrow';
 
-function reducer(state, { type, position }) {
+function reducer(state, {type, position, id }) {
   switch(type) {
     case 'beginArrow':
-      const id = state.currentId + 1;
-      const newArrow = {
-        id,
-        initial: position,
-        current: position,
+      const arrowId = state.currentArrowId + 1;
+      const arrow = {
+        id: arrowId,
+        initialPosition: position,
+        currentPosition: position,
       };
 
-      return { ...state, currentId: state.currentId + 1, drawing: newArrow };
+      return { ...state, currentArrowId: state.currentArrowId + 1, drawing: arrow };
     case 'continueArrow':
       const currentArrow = state.drawing;
       if (currentArrow) {
-        currentArrow.current = position;
+        currentArrow.currentPosition = position;
       }
 
       return { ...state, drawing: currentArrow };
     case 'endArrow':
-      const arrowToEnd = state.drawing;
+      if (state.drawing) {
+        return { ...state, arrows: [...state.arrows, state.drawing], drawing: null };
+      }
+      return state;
+    case 'moveNode':
+      const node = state.nodes.find(n => n.id === id);
+      node.position = position;
 
-      return { ...state, arrows: [...state.arrows, arrowToEnd], drawing: null };
+      return { ...state, nodes: [ ...state.nodes.filter(n => n !== node), node ] };
     default:
       throw new Error();
   }
@@ -33,15 +39,22 @@ function reducer(state, { type, position }) {
 
 const initialState = {
   arrows: [],
-  currentId: -1,
+  currentArrowId: -1,
   drawing: null,
+  nodes: [
+    { position: {x: 50, y: 50}, id: 0 },
+    { position: {x: 200, y: 50}, id: 1 },
+  ],
+  currentNodeId: 1,
 };
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const handleMouseDown = e => {
-    dispatch({ type: 'beginArrow', position: e.target.getStage().getPointerPosition() });
+    if (e.target === e.target.getStage()) {
+      dispatch({ type: 'beginArrow', position: e.target.getStage().getPointerPosition() });
+    }
   };
 
   const handleMouseMove = e => {
@@ -52,8 +65,9 @@ function App() {
     dispatch({ type: 'endArrow', position: e.target.getStage().getPointerPosition() });
   }
 
-  const { arrows, drawing } = state;
-  const arrowsToDraw = drawing ? [...arrows, drawing] : arrows;
+  const moveNode = (id, position) => dispatch({ type: 'moveNode', id, position });
+
+  const { nodes, arrows, drawing } = state;
 
   return (
     <div className="App">
@@ -66,9 +80,12 @@ function App() {
         height={400}
       >
         <Layer>
-          <State number={0} />
-          <State number={1} />
-          {arrowsToDraw.map(({ id, initial, current }) => <StateArrow key={id} initial={initial} current={current} />)}
+          {nodes.map(({ id, position }) => 
+            <Node key={`state-${id}`} position={position} number={id} setPosition={position => moveNode(id, position)} />)}
+          {arrows.map(({ id, initialPosition, currentPosition }) => 
+            <NodeArrow key={`arrow-${id}`} initialPosition={initialPosition} currentPosition={currentPosition} />)}
+          {drawing && 
+            <NodeArrow key={`arrow-${drawing.id}`} initialPosition={drawing.initialPosition} currentPosition={drawing.currentPosition} />}
         </Layer>
       </Stage>
     </div>
