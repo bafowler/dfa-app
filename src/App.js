@@ -3,7 +3,7 @@ import { useReducer } from 'react';
 import { Stage, Layer } from 'react-konva';
 import Node from './Node';
 import NodeArrow from './NodeArrow';
-import { closeTo, getClosestPointOnCircle } from './utils';
+import { withinCircle, getClosestPointOnCircle } from './utils';
 
 const NODE_RADIUS = 25;
 const NODE_OUTER_RADIUS = NODE_RADIUS + 10;
@@ -29,8 +29,8 @@ function reducer(state, {type, position, id }) {
     case 'endArrow':
       if (state.drawing) {
         const currentArrow = state.drawing;
-        const startNode = state.nodes.find(n => closeTo(n.position, currentArrow.initialPosition, NODE_OUTER_RADIUS));
-        const endNode = state.nodes.find(n => closeTo(n.position, currentArrow.currentPosition, NODE_OUTER_RADIUS));
+        const startNode = state.nodes.find(n => withinCircle(n.position, currentArrow.initialPosition, NODE_OUTER_RADIUS));
+        const endNode = state.nodes.find(n => withinCircle(n.position, currentArrow.currentPosition, NODE_OUTER_RADIUS));
 
         if (startNode && endNode) {
           const newArrow = { id: currentArrow.id, startNodeId: startNode.id, endNodeId: endNode.id };
@@ -58,26 +58,22 @@ const initialState = {
   nodes: [
     { position: {x: 50, y: 50}, id: 0 },
     { position: {x: 200, y: 50}, id: 1 },
+    { position: {x: 350, y: 50}, id: 2 }
   ],
-  currentNodeId: 1,
+  currentNodeId: 2,
 };
 
 function App() {
   const [{ nodes, arrows, drawing }, dispatch] = useReducer(reducer, initialState);
 
-  const handleMouseDown = e => {
-    if (e.target === e.target.getStage()) {
-      dispatch({ type: 'beginArrow', position: e.target.getStage().getPointerPosition() });
-    }
-  };
+  const handleMouseDown = e => 
+    dispatch({ type: 'beginArrow', position: e.target.getStage().getPointerPosition() });
 
-  const handleMouseMove = e => {
+  const handleMouseMove = e =>
     dispatch({ type: 'continueArrow', position: e.target.getStage().getPointerPosition() });
-  };
 
-  const handleMouseUp = e => {
+  const handleMouseUp = e =>
     dispatch({ type: 'endArrow', position: e.target.getStage().getPointerPosition() });
-  }
 
   const moveNode = (id, position) => dispatch({ type: 'moveNode', id, position });
 
@@ -93,7 +89,14 @@ function App() {
       >
         <Layer>
           {nodes.map(({ id, position }) => 
-            <Node key={`state-${id}`} position={position} radius={NODE_RADIUS} number={id} setPosition={position => moveNode(id, position)} />)}
+            <Node key={`state-${id}`}
+                  position={position} 
+                  radius={NODE_RADIUS} 
+                  outerRadius={NODE_OUTER_RADIUS}
+                  number={id} 
+                  setPosition={position => moveNode(id, position)} 
+            />)
+          }
           {arrows.map(({ id, startNodeId, endNodeId }) => {
             const startNodeCenter = nodes.find(n => n.id === startNodeId).position;
             const endNodeCenter = nodes.find(n => n.id === endNodeId).position;
