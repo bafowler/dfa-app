@@ -1,8 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Group, Circle, Text } from 'react-konva';
 
-export default function Node({ position, number, setPosition }) {
-
+export default function Node({ position, number, radius, setPosition }) {
   const textRef = useRef(null);
 
   useEffect(() => {
@@ -18,14 +17,14 @@ export default function Node({ position, number, setPosition }) {
       x={position.x}
       y={position.y}
       draggable
-      onDragEnd={e => 
+      onDragMove={e => 
         setPosition({ x: e.target.x(), y: e.target.y() })
       }
     >
       <Circle 
         stroke='#282c34'
         strokeWidth={2}
-        radius={25}
+        radius={radius}
       />
       <Text 
         ref={textRef}
