@@ -1,12 +1,10 @@
 import './App.css';
 import { useReducer } from 'react';
 import { Stage, Layer } from 'react-konva';
-import Node from './Node';
+import { Node, NODE_RADIUS, NODE_OUTER_RADIUS } from './Node';
 import NodeArrow from './NodeArrow';
+import NodeMenu from './NodeMenu';
 import { withinCircle, getClosestPointOnCircle } from './utils';
-
-const NODE_RADIUS = 25;
-const NODE_OUTER_RADIUS = NODE_RADIUS + 10;
 
 function reducer(state, {type, position, id }) {
   switch(type) {
@@ -56,9 +54,9 @@ const initialState = {
   currentArrowId: -1,
   drawing: null,
   nodes: [
-    { position: {x: 50, y: 50}, id: 0 },
-    { position: {x: 200, y: 50}, id: 1 },
-    { position: {x: 350, y: 50}, id: 2 }
+    { position: {x: 50, y: 200}, id: 0 },
+    { position: {x: 200, y: 200}, id: 1 },
+    { position: {x: 350, y: 200}, id: 2 }
   ],
   currentNodeId: 2,
 };
@@ -84,17 +82,20 @@ function App() {
         onMouseDown={handleMouseDown} 
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        width={600} 
-        height={400}
+        width={1000} 
+        height={600}
       >
         <Layer>
+          <NodeMenu />
           {nodes.map(({ id, position }) => 
-            <Node key={`state-${id}`}
-                  position={position} 
-                  radius={NODE_RADIUS} 
-                  outerRadius={NODE_OUTER_RADIUS}
-                  number={id} 
-                  setPosition={position => moveNode(id, position)} 
+            <Node 
+              key={`state-${id}`}
+              position={position} 
+              radius={NODE_RADIUS} 
+              outerRadius={NODE_OUTER_RADIUS}
+              isDraggable
+              number={id} 
+              setPosition={position => moveNode(id, position)} 
             />)
           }
           {arrows.map(({ id, startNodeId, endNodeId }) => {

@@ -1,7 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { Group, Circle, Text } from 'react-konva';
 
-export default function Node({ position, number, radius, outerRadius, setPosition }) {
+export const NODE_RADIUS = 25;
+export const NODE_OUTER_RADIUS = NODE_RADIUS + 10;
+
+export function Node({ position, number, isDraggable, setPosition, type='default' }) {
   const textRef = useRef(null);
 
   useEffect(() => {
@@ -16,20 +19,27 @@ export default function Node({ position, number, radius, outerRadius, setPositio
     <Group
       x={position.x}
       y={position.y}
-      draggable
+      draggable={isDraggable}
       onDragMove={e => setPosition({ x: e.target.x(), y: e.target.y() })}
       onMouseDown={e => e.cancelBubble = true}
     >
+      {type === 'accept' && (
+        <Circle
+          stroke='#282c34'
+          strokeWidth={2}
+          radius={NODE_RADIUS + 5}
+        />
+      )}
       <Circle 
         stroke='#282c34'
         strokeWidth={2}
-        radius={radius}
+        radius={NODE_RADIUS}
       />
       <Text 
         ref={textRef}
         fontFamily='Gothic A1'
         fontSize={14}
-        text={`q${number}`}
+        text={number === undefined  ?  'q' : `q${number}`}
         fill='#282c34'
         verticalAlign='middle'
       />
