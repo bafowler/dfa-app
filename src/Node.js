@@ -4,10 +4,12 @@ import { Group, Circle, Text } from 'react-konva';
 export const NODE_RADIUS = 25;
 export const NODE_OUTER_RADIUS = NODE_RADIUS + 10;
 
-export function Node({ position, number, isDraggable, setPosition, type='default' }) {
+export function Node({ position, number, isDraggable, setPosition, type='default', onClick, focusOnCreation }) {
   const textRef = useRef(null);
+  const nodeRef = useRef(null);
 
   useEffect(() => {
+    // Center text within node
     if (textRef.current) {
       const text = textRef.current;
       text.offsetX(text.width() / 2);
@@ -15,13 +17,24 @@ export function Node({ position, number, isDraggable, setPosition, type='default
     }
   }, []);
 
+  useEffect(() => {
+    // Begin drag event on node creation to enable drag & drop
+    if (nodeRef.current && focusOnCreation) {
+      nodeRef.current.startDrag();
+    }
+  }, [focusOnCreation]);
+
   return (
     <Group
+      ref={nodeRef}
       x={position.x}
       y={position.y}
       draggable={isDraggable}
       onDragMove={e => setPosition({ x: e.target.x(), y: e.target.y() })}
-      onMouseDown={e => e.cancelBubble = true}
+      onMouseDown={e => {
+        if (onClick) onClick(e);
+        e.cancelBubble = true;
+      }}
     >
       {type === 'accept' && (
         <Circle

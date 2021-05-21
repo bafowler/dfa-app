@@ -1,7 +1,7 @@
 import './App.css';
 import { useReducer } from 'react';
 import { Stage, Layer } from 'react-konva';
-import { Node, NODE_RADIUS, NODE_OUTER_RADIUS } from './Node';
+import { Node, NODE_OUTER_RADIUS } from './Node';
 import NodeArrow from './NodeArrow';
 import NodeMenu from './NodeMenu';
 import { withinCircle, getClosestPointOnCircle } from './utils';
@@ -9,13 +9,13 @@ import { withinCircle, getClosestPointOnCircle } from './utils';
 function reducer(state, {type, position, id }) {
   switch(type) {
     case 'beginArrow':
-      const arrow = {
+      const newArrow = {
         id: state.currentArrowId + 1,
         initialPosition: position,
         currentPosition: position,
       };
 
-      return { ...state, drawing: arrow };
+      return { ...state, drawing: newArrow };
     case 'continueArrow':
       if (state.drawing) {
         const currentArrow = state.drawing;
@@ -44,6 +44,10 @@ function reducer(state, {type, position, id }) {
       node.position = position;
 
       return { ...state, nodes: [ ...state.nodes.filter(n => n !== node), node ] };
+    case 'createNode':
+      const newNode = { position, id: state.currentNodeId + 1 };
+
+      return { ...state, nodes: [...state.nodes, newNode ], currentNodeId: newNode.id };
     default:
       throw new Error();
   }
@@ -53,16 +57,12 @@ const initialState = {
   arrows: [],
   currentArrowId: -1,
   drawing: null,
-  nodes: [
-    { position: {x: 50, y: 200}, id: 0 },
-    { position: {x: 200, y: 200}, id: 1 },
-    { position: {x: 350, y: 200}, id: 2 }
-  ],
-  currentNodeId: 2,
+  nodes: [],
+  currentNodeId: -1,
 };
 
 function App() {
-  const [{ nodes, arrows, drawing }, dispatch] = useReducer(reducer, initialState);
+  const [{ nodes, arrows, drawing, currentNodeId }, dispatch] = useReducer(reducer, initialState);
 
   const handleMouseDown = e => 
     dispatch({ type: 'beginArrow', position: e.target.getStage().getPointerPosition() });
@@ -75,6 +75,8 @@ function App() {
 
   const moveNode = (id, position) => dispatch({ type: 'moveNode', id, position });
 
+  const createNode = position => dispatch({ type: 'createNode', position });
+
   return (
     <div className="App">
       <Stage 
@@ -86,13 +88,12 @@ function App() {
         height={600}
       >
         <Layer>
-          <NodeMenu />
+          <NodeMenu createNode={createNode} />
           {nodes.map(({ id, position }) => 
             <Node 
+              focusOnCreation={id === currentNodeId}
               key={`state-${id}`}
               position={position} 
-              radius={NODE_RADIUS} 
-              outerRadius={NODE_OUTER_RADIUS}
               isDraggable
               number={id} 
               setPosition={position => moveNode(id, position)} 

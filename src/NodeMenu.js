@@ -1,7 +1,7 @@
 import { Rect, Text, Group } from 'react-konva';
 import { Node } from './Node';
 
-export default function NodeMenu() {
+export default function NodeMenu({ createNode }) {
   return (
     <Group
       x={20}
@@ -16,6 +16,7 @@ export default function NodeMenu() {
         cornerRadius={10}
       />
       <Node 
+        onClick={e => createNode(e.target.getStage().getPointerPosition())}
         position={{ x: 40, y: 60}}
         isDraggable={false}
       />
