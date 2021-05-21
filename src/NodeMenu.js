@@ -9,7 +9,7 @@ export default function NodeMenu({ createNode }) {
     >
       <Rect
         y={20}
-        width={180}
+        width={165}
         height={80}
         stroke='#282c34'
         strokeWidth={2}

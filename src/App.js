@@ -108,7 +108,7 @@ function App() {
             return <NodeArrow key={`arrow-${id}`} initialPosition={initialPosition} currentPosition={currentPosition} />;
           })}
           {drawing && 
-            <NodeArrow initialPosition={drawing.initialPosition} currentPosition={drawing.currentPosition} />}
+            <NodeArrow initialPosition={drawing.initialPosition} currentPosition={drawing.currentPosition} incomplete />}
         </Layer>
       </Stage>
     </div>

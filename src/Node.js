@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { Group, Circle, Text } from 'react-konva';
 
 export const NODE_RADIUS = 25;
@@ -9,7 +9,7 @@ export function Node({ position, number, isDraggable, setPosition, type='default
   const textRef = useRef(null);
   const nodeRef = useRef(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Center text within node
     if (textRef.current) {
       const text = textRef.current;
