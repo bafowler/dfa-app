@@ -1,7 +1,7 @@
 import './App.css';
 import { useReducer } from 'react';
 import { Stage, Layer } from 'react-konva';
-import { Node, NODE_OUTER_RADIUS } from './Node';
+import { Node, NODE_OUTER_RADIUS, NODE_CLICK_RADIUS } from './Node';
 import NodeArrow from './NodeArrow';
 import NodeMenu from './NodeMenu';
 import { withinCircle, getClosestPointOnCircle } from './utils';
@@ -27,8 +27,8 @@ function reducer(state, {type, position, id, nodeType }) {
     case 'endArrow':
       if (state.drawing) {
         const currentArrow = state.drawing;
-        const startNode = state.nodes.find(n => withinCircle(n.position, currentArrow.initialPosition, NODE_OUTER_RADIUS));
-        const endNode = state.nodes.find(n => withinCircle(n.position, currentArrow.currentPosition, NODE_OUTER_RADIUS));
+        const startNode = state.nodes.find(n => withinCircle(n.position, currentArrow.initialPosition, NODE_CLICK_RADIUS));
+        const endNode = state.nodes.find(n => withinCircle(n.position, currentArrow.currentPosition, NODE_CLICK_RADIUS));
 
         if (startNode && endNode) {
           const newArrow = { id: currentArrow.id, startNodeId: startNode.id, endNodeId: endNode.id };

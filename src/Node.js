@@ -3,6 +3,7 @@ import { Group, Circle, Text } from 'react-konva';
 
 export const NODE_RADIUS = 25;
 export const NODE_OUTER_RADIUS = NODE_RADIUS + 10;
+export const NODE_CLICK_RADIUS = NODE_OUTER_RADIUS + 10;
 
 export function Node({ position, number, isDraggable, setPosition, type='default', onClick, focusOnCreation }) {
   const textRef = useRef(null);
