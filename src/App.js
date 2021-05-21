@@ -6,7 +6,7 @@ import NodeArrow from './NodeArrow';
 import NodeMenu from './NodeMenu';
 import { withinCircle, getClosestPointOnCircle } from './utils';
 
-function reducer(state, {type, position, id }) {
+function reducer(state, {type, position, id, nodeType }) {
   switch(type) {
     case 'beginArrow':
       const newArrow = {
@@ -45,7 +45,7 @@ function reducer(state, {type, position, id }) {
 
       return { ...state, nodes: [ ...state.nodes.filter(n => n !== node), node ] };
     case 'createNode':
-      const newNode = { position, id: state.currentNodeId + 1 };
+      const newNode = { position, id: state.currentNodeId + 1, nodeType };
 
       return { ...state, nodes: [...state.nodes, newNode ], currentNodeId: newNode.id };
     default:
@@ -75,7 +75,7 @@ function App() {
 
   const moveNode = (id, position) => dispatch({ type: 'moveNode', id, position });
 
-  const createNode = position => dispatch({ type: 'createNode', position });
+  const createNode = (position, nodeType) => dispatch({ type: 'createNode', position, nodeType });
 
   return (
     <div className="App">
@@ -89,13 +89,14 @@ function App() {
       >
         <Layer>
           <NodeMenu createNode={createNode} />
-          {nodes.map(({ id, position }) => 
+          {nodes.map(({ id, position, nodeType }) => 
             <Node 
               focusOnCreation={id === currentNodeId}
               key={`state-${id}`}
               position={position} 
               isDraggable
               number={id} 
+              type={nodeType}
               setPosition={position => moveNode(id, position)} 
             />)
           }
@@ -107,7 +108,7 @@ function App() {
             return <NodeArrow key={`arrow-${id}`} initialPosition={initialPosition} currentPosition={currentPosition} />;
           })}
           {drawing && 
-            <NodeArrow key={`drawing-${drawing.id}`} initialPosition={drawing.initialPosition} currentPosition={drawing.currentPosition} />}
+            <NodeArrow initialPosition={drawing.initialPosition} currentPosition={drawing.currentPosition} />}
         </Layer>
       </Stage>
     </div>
