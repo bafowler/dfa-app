@@ -9,7 +9,7 @@ export default function NodeMenu({ createNode }) {
     >
       <Rect
         y={20}
-        width={165}
+        width={180}
         height={80}
         stroke='#282c34'
         strokeWidth={2}
@@ -17,12 +17,12 @@ export default function NodeMenu({ createNode }) {
       />
       <Node 
         onClick={e => createNode(e.target.getStage().getPointerPosition(), 'default')}
-        position={{ x: 40, y: 60}}
+        position={{ x: 50, y: 60}}
         isDraggable={false}
       />
       <Node 
         onClick={e => createNode(e.target.getStage().getPointerPosition(), 'accept')}
-        position={{ x: 120, y: 60}}
+        position={{ x: 130, y: 60}}
         isDraggable={false}
         type='accept'
       />

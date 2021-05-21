@@ -32,3 +32,14 @@
   justify-content: center;
   width: 50px;
 }
+
+.arrowText {
+  background: none;
+  border: none;
+  position: absolute;
+  font-family: 'Gothic A1', sans-serif;
+  font-size: 14;
+  margin: 0;
+  padding: 0;
+  outline: none;
+}
