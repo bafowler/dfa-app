@@ -5,7 +5,7 @@ import { Html } from 'react-konva-utils';
 
 const MAX_TEXT_SPACE = 12;
 
-export default function NodeArrowText({ position }) {
+export default function NodeArrowText({ position, removeArrow }) {
   const textRef = useRef(null);
   const inputRef = useRef(null);
   const [ editing, setEditing ] = useState(true);
@@ -56,6 +56,14 @@ export default function NodeArrowText({ position }) {
     return false;
   }
 
+  function handleInputBlur() {
+    if (values.length === 0) {
+      removeArrow();
+    } else {
+      setEditing(false);
+    }
+  }
+
   return (
     <>
       <Text
@@ -78,7 +86,7 @@ export default function NodeArrowText({ position }) {
             className='arrowText' 
             ref={inputRef}
             value={values.join()}
-            onBlur={() => setEditing(false)}
+            onBlur={handleInputBlur}
             onChange={() => false}
             onKeyDown={handleKeyDown}
           />

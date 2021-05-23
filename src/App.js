@@ -39,6 +39,9 @@ function reducer(state, {type, position, id, nodeType }) {
       }
 
       return state;
+
+    case 'removeArrow':
+      return { ...state, arrows: [ ...state.arrows.filter(a => a.id !== id) ] };
     case 'moveNode':
       const node = state.nodes.find(n => n.id === id);
       node.position = position;
@@ -66,15 +69,13 @@ function App() {
 
   const handleMouseDown = e => 
     dispatch({ type: 'beginArrow', position: e.target.getStage().getPointerPosition() });
-
   const handleMouseMove = e =>
     dispatch({ type: 'continueArrow', position: e.target.getStage().getPointerPosition() });
-
   const handleMouseUp = e =>
     dispatch({ type: 'endArrow', position: e.target.getStage().getPointerPosition() });
 
+  const removeArrow = id => dispatch({ type: 'removeArrow', id });
   const moveNode = (id, position) => dispatch({ type: 'moveNode', id, position });
-
   const createNode = (position, nodeType) => dispatch({ type: 'createNode', position, nodeType });
 
   return (
@@ -105,7 +106,14 @@ function App() {
             const endNodeCenter = nodes.find(n => n.id === endNodeId).position;
             const initialPosition = getClosestPointOnCircle(startNodeCenter, endNodeCenter, NODE_OUTER_RADIUS);
             const currentPosition = getClosestPointOnCircle(endNodeCenter, startNodeCenter, NODE_OUTER_RADIUS);
-            return <NodeArrow key={`arrow-${id}`} initialPosition={initialPosition} currentPosition={currentPosition} />;
+            return (
+              <NodeArrow 
+                key={`arrow-${id}`}
+                initialPosition={initialPosition} 
+                currentPosition={currentPosition} 
+                removeArrow={() => removeArrow(id)}
+              />
+            );
           })}
           {drawing && 
             <NodeArrow initialPosition={drawing.initialPosition} currentPosition={drawing.currentPosition} incomplete />}
