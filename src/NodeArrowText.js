@@ -8,8 +8,8 @@ const MAX_TEXT_SPACE = 12;
 export default function NodeArrowText({ position }) {
   const textRef = useRef(null);
   const inputRef = useRef(null);
-  const [ editing, setEditing ] = useState(false);
-  const [ values, setValues ] = useState([0, 1]);
+  const [ editing, setEditing ] = useState(true);
+  const [ values, setValues ] = useState([]);
 
   useLayoutEffect(() => {
       // Center text in the middle of the arrow
@@ -22,29 +22,17 @@ export default function NodeArrowText({ position }) {
 
   useEffect(() => {
     if (editing && inputRef.current) {
-      const textNode = textRef.current;
       const input = inputRef.current;
-
-      input.value = textNode.text();
 
       const inputPosition = {
         x: position.x - MAX_TEXT_SPACE,
         y: position.y - MAX_TEXT_SPACE,
       };
+
       input.style.top = inputPosition.y + 'px';
       input.style.left = inputPosition.x + 'px';
       input.style.width = (MAX_TEXT_SPACE * 2) + 'px';
       input.style.height = (MAX_TEXT_SPACE * 2) + 'px';
-
-      // Adjust position on Firefox
-      let transform = '';
-      let px = 0;
-      const isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-      if (isFirefox) {
-        px += 2 + Math.round(textNode.fontSize() / 20);
-      }
-      transform += 'translateY(-' + px + 'px)';
-      input.style.transform = transform;
 
       input.focus();
     }
@@ -90,9 +78,7 @@ export default function NodeArrowText({ position }) {
             className='arrowText' 
             ref={inputRef}
             value={values.join()}
-            onBlur={e => {
-              setEditing(false);
-            }}
+            onBlur={() => setEditing(false)}
             onChange={() => false}
             onKeyDown={handleKeyDown}
           />
