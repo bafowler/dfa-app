@@ -6,6 +6,8 @@ export const NODE_RADIUS = 25;
 export const NODE_OUTER_RADIUS = NODE_RADIUS + 10;
 export const NODE_CLICK_RADIUS = NODE_OUTER_RADIUS + 10;
 
+const isMouseDown = e => e.evt.buttons === 1;
+
 export function Node({ position, number, isDraggable, setPosition, type='default', onClick, focusOnCreation }) {
   const nodeRef = useRef(null);
   const [, setTextRef ] = useCenterText();
@@ -23,7 +25,13 @@ export function Node({ position, number, isDraggable, setPosition, type='default
       x={position.x}
       y={position.y}
       draggable={isDraggable}
-      onDragMove={e => setPosition({ x: e.target.x(), y: e.target.y() })}
+      onDragMove={e => {
+        if (isMouseDown(e)) {
+          setPosition({ x: e.target.x(), y: e.target.y() })
+        } else {
+          e.target.stopDrag();
+        }
+      }}
       onMouseDown={e => {
         if (onClick) onClick(e);
         e.cancelBubble = true;
