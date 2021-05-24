@@ -5,8 +5,8 @@ import useCenterText from './useCenterText';
 const ERROR_DURATION_MS = 2000;
 
 export default function ErrorMessage({ message, position, removeError }) {
-  const [ fadeIn, setFadeIn ] = useState(true);
   const [ errorRef, setErrorRef ] = useCenterText();
+  const [ fadeIn, setFadeIn ] = useState(true);
 
   useEffect(() => {
     // Fade error message in and then out
@@ -17,14 +17,14 @@ export default function ErrorMessage({ message, position, removeError }) {
         errorRef.current.to({
           opacity: 1,
           duration: durationInSeconds / 2,
+          onFinish: () => setFadeIn(false)
         });
-        setTimeout(() => setFadeIn(false), ERROR_DURATION_MS / 2);
       } else {
         errorRef.current.to({
           opacity: 0,
           duration: durationInSeconds / 2,
+          onFinish: () => removeError()
         });
-        setTimeout(() => removeError(), ERROR_DURATION_MS / 2);
       }
     }
   }, [ fadeIn, removeError, errorRef ]);
