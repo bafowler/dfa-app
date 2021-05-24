@@ -1,24 +1,16 @@
 import './App.css';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Text } from 'react-konva';
 import { Html } from 'react-konva-utils';
+import useCenterText from './useCenterText';
 
 const MAX_TEXT_SPACE = 12;
 
 export default function NodeArrowText({ position, removeArrow, addError }) {
-  const textRef = useRef(null);
   const inputRef = useRef(null);
   const [ editing, setEditing ] = useState(true);
   const [ values, setValues ] = useState([]);
-
-  useLayoutEffect(() => {
-      // Center text in the middle of the arrow
-      if (!editing && textRef.current) {
-        const textNode = textRef.current;
-        textNode.offsetX(textNode.width() / 2);
-        textNode.offsetY(textNode.height() / 2);
-      }
-    }, [editing]);
+  const [ , setTextRef ] = useCenterText(!editing);
 
   useEffect(() => {
     if (editing && inputRef.current) {
@@ -70,7 +62,7 @@ export default function NodeArrowText({ position, removeArrow, addError }) {
           setEditing(true)
           e.cancelBubble = true;
         }}
-        ref={textRef}
+        ref={setTextRef}
         x={position.x}
         y={position.y}
         fontFamily='Gothic A1'

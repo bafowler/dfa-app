@@ -1,22 +1,14 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Group, Circle, Text } from 'react-konva';
+import useCenterText from './useCenterText';
 
 export const NODE_RADIUS = 25;
 export const NODE_OUTER_RADIUS = NODE_RADIUS + 10;
 export const NODE_CLICK_RADIUS = NODE_OUTER_RADIUS + 10;
 
 export function Node({ position, number, isDraggable, setPosition, type='default', onClick, focusOnCreation }) {
-  const textRef = useRef(null);
   const nodeRef = useRef(null);
-
-  useLayoutEffect(() => {
-    // Center text within node
-    if (textRef.current) {
-      const text = textRef.current;
-      text.offsetX(text.width() / 2);
-      text.offsetY(text.height() / 2);
-    }
-  }, []);
+  const [, setTextRef ] = useCenterText();
 
   useEffect(() => {
     // Begin drag event on node creation to enable drag & drop
@@ -50,7 +42,7 @@ export function Node({ position, number, isDraggable, setPosition, type='default
         radius={NODE_RADIUS}
       />
       <Text 
-        ref={textRef}
+        ref={setTextRef}
         fontFamily='Gothic A1'
         fontSize={14}
         text={number === undefined  ?  'q' : `q${number}`}

@@ -1,20 +1,12 @@
-import { useLayoutEffect, useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Text } from 'react-konva';
+import useCenterText from './useCenterText';
 
 const ERROR_DURATION_MS = 2000;
 
 export default function ErrorMessage({ message, position, removeError }) {
-  const errorRef = useRef(null);
   const [ fadeIn, setFadeIn ] = useState(true);
-  
-  useLayoutEffect(() => {
-    // Center text in the middle of the arrow
-    if (errorRef.current) {
-      const errorNode = errorRef.current;
-      errorNode.offsetX(errorNode.width() / 2);
-      errorNode.offsetY(errorNode.height() / 2);
-    }
-  }, []);
+  const [ errorRef, setErrorRef ] = useCenterText();
 
   useEffect(() => {
     // Fade error message in and then out
@@ -35,11 +27,11 @@ export default function ErrorMessage({ message, position, removeError }) {
         setTimeout(() => removeError(), ERROR_DURATION_MS / 2);
       }
     }
-  }, [ fadeIn, removeError ]);
+  }, [ fadeIn, removeError, errorRef ]);
 
   return (
     <Text
-      ref={errorRef}
+      ref={setErrorRef}
       x={position.x}
       y={position.y}
       fontFamily='Gothic A1'
