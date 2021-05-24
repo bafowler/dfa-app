@@ -5,7 +5,7 @@ import { Html } from 'react-konva-utils';
 
 const MAX_TEXT_SPACE = 12;
 
-export default function NodeArrowText({ position, removeArrow }) {
+export default function NodeArrowText({ position, removeArrow, addError }) {
   const textRef = useRef(null);
   const inputRef = useRef(null);
   const [ editing, setEditing ] = useState(true);
@@ -41,17 +41,16 @@ export default function NodeArrowText({ position, removeArrow }) {
   function handleKeyDown(e) {
     if (e.code === 'Enter' || e.code === 'Escape') {
       e.target.blur();
-    }
-    if (e.code === 'Backspace') {
+    } else if (e.code === 'Backspace') {
       const newValues = [...values];
       newValues.pop();
       setValues(newValues);
-    }
-    if (e.code === 'Digit0' && !values.includes(0)) {
+    } else if (e.code === 'Digit0' && !values.includes(0)) {
       setValues([ 0, ...values ]);
-    }
-    if (e.code === 'Digit1' && !values.includes(1)) {
+    } else if (e.code === 'Digit1' && !values.includes(1)) {
       setValues([ ...values, 1 ]);
+    } else {
+      addError({ msg: 'only valid transitions are 0 and 1', position });
     }
     return false;
   }

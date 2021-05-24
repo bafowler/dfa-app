@@ -8,6 +8,7 @@ export default function ErrorMessage({ duration, message, position, removeError 
   const [ fadeIn, setFadeIn ] = useState(true);
 
   useEffect(() => {
+    // Fade error message in and then out
     const durationInSeconds = duration / 1000;
 
     if (errorRef.current) {

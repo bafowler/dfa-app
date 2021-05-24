@@ -1,7 +1,7 @@
 import { Arrow, Line } from 'react-konva';
 import NodeArrowText from './NodeArrowText';
 
-export default function NodeArrow({ initialPosition, currentPosition, incomplete=false, removeArrow }) {
+export default function NodeArrow({ initialPosition, currentPosition, incomplete=false, removeArrow, addError }) {
   const midpoint = { 
     x: (currentPosition.x + initialPosition.x) / 2, 
     y: (currentPosition.y + initialPosition.y) / 2
@@ -29,7 +29,7 @@ export default function NodeArrow({ initialPosition, currentPosition, incomplete
       fill='black' 
       stroke='black' 
     />
-    <NodeArrowText position={midpoint} removeArrow={removeArrow} />
+    <NodeArrowText position={midpoint} removeArrow={removeArrow} addError={addError} />
     <Arrow 
       points={[ midpoint.x + (unitVector.x * space), midpoint.y + (unitVector.y * space), currentPosition.x, currentPosition.y ]} 
       fill='black' 

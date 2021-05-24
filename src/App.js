@@ -55,6 +55,8 @@ function reducer(state, {type, position, id, nodeType, error }) {
       const newNode = { position, id: state.currentNodeId + 1, nodeType };
 
       return { ...state, nodes: [...state.nodes, newNode ], currentNodeId: newNode.id };
+    case 'addError': 
+      return { ...state, error };
     case 'removeError': {
       return { ...state, error: null };
     }
@@ -84,6 +86,7 @@ function App() {
   const removeArrow = (id, error) => dispatch({ type: 'removeArrow', id, error });
   const moveNode = (id, position) => dispatch({ type: 'moveNode', id, position });
   const createNode = (position, nodeType) => dispatch({ type: 'createNode', position, nodeType });
+  const addError = error => dispatch({ type: 'addError', error });
   const removeError = () => dispatch({ type: 'removeError' });
 
   return (
@@ -99,6 +102,7 @@ function App() {
       >
         <Layer>
           <NodeMenu createNode={createNode} />
+          {error && <ErrorMessage position={error.position} message={error.msg} duration={1000} removeError={removeError} />}
           {nodes.map(({ id, position, nodeType }) => 
             <Node 
               key={`state-${id}`}
@@ -121,12 +125,12 @@ function App() {
                 initialPosition={initialPosition} 
                 currentPosition={currentPosition} 
                 removeArrow={error => removeArrow(id, error)}
+                addError={addError}
               />
             );
           })}
           {drawing && 
             <NodeArrow initialPosition={drawing.initialPosition} currentPosition={drawing.currentPosition} incomplete />}
-          {error && <ErrorMessage position={error.position} message={error.msg} duration={1000} removeError={removeError} />}
         </Layer>
       </Stage>
     </div>
