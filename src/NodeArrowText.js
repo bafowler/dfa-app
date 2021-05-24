@@ -58,7 +58,7 @@ export default function NodeArrowText({ position, removeArrow }) {
 
   function handleInputBlur() {
     if (values.length === 0) {
-      removeArrow();
+      removeArrow({ msg: 'must select a transition', position });
     } else {
       setEditing(false);
     }

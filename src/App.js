@@ -1,12 +1,17 @@
 import './App.css';
-import { useReducer } from 'react';
+import { useReducer, useRef } from 'react';
 import { Stage, Layer } from 'react-konva';
 import { Node, NODE_OUTER_RADIUS, NODE_CLICK_RADIUS } from './Node';
 import NodeArrow from './NodeArrow';
 import NodeMenu from './NodeMenu';
+import ErrorMessage from './ErrorMessage';
 import { withinCircle, getClosestPointOnCircle } from './utils';
 
-function reducer(state, {type, position, id, nodeType }) {
+function reducer(state, {type, position, id, nodeType, error }) {
+  if (error) {
+    state.error = error;
+  }
+
   switch(type) {
     case 'beginArrow':
       const newArrow = {
@@ -39,7 +44,6 @@ function reducer(state, {type, position, id, nodeType }) {
       }
 
       return state;
-
     case 'removeArrow':
       return { ...state, arrows: [ ...state.arrows.filter(a => a.id !== id) ] };
     case 'moveNode':
@@ -51,6 +55,9 @@ function reducer(state, {type, position, id, nodeType }) {
       const newNode = { position, id: state.currentNodeId + 1, nodeType };
 
       return { ...state, nodes: [...state.nodes, newNode ], currentNodeId: newNode.id };
+    case 'removeError': {
+      return { ...state, error: null };
+    }
     default:
       throw new Error();
   }
@@ -59,13 +66,13 @@ function reducer(state, {type, position, id, nodeType }) {
 const initialState = {
   arrows: [],
   currentArrowId: -1,
-  drawing: null,
   nodes: [],
   currentNodeId: -1,
 };
 
 function App() {
-  const [{ nodes, arrows, drawing, currentNodeId }, dispatch] = useReducer(reducer, initialState);
+  const [{ nodes, arrows, drawing, currentNodeId, error }, dispatch] = useReducer(reducer, initialState);
+  const stageRef = useRef(null);
 
   const handleMouseDown = e => 
     dispatch({ type: 'beginArrow', position: e.target.getStage().getPointerPosition() });
@@ -74,13 +81,15 @@ function App() {
   const handleMouseUp = e =>
     dispatch({ type: 'endArrow', position: e.target.getStage().getPointerPosition() });
 
-  const removeArrow = id => dispatch({ type: 'removeArrow', id });
+  const removeArrow = (id, error) => dispatch({ type: 'removeArrow', id, error });
   const moveNode = (id, position) => dispatch({ type: 'moveNode', id, position });
   const createNode = (position, nodeType) => dispatch({ type: 'createNode', position, nodeType });
+  const removeError = () => dispatch({ type: 'removeError' });
 
   return (
     <div className="App">
       <Stage 
+        ref={stageRef}
         className="stage" 
         onMouseDown={handleMouseDown} 
         onMouseMove={handleMouseMove}
@@ -92,8 +101,8 @@ function App() {
           <NodeMenu createNode={createNode} />
           {nodes.map(({ id, position, nodeType }) => 
             <Node 
-              focusOnCreation={id === currentNodeId}
               key={`state-${id}`}
+              focusOnCreation={id === currentNodeId}
               position={position} 
               isDraggable
               number={id} 
@@ -111,12 +120,13 @@ function App() {
                 key={`arrow-${id}`}
                 initialPosition={initialPosition} 
                 currentPosition={currentPosition} 
-                removeArrow={() => removeArrow(id)}
+                removeArrow={error => removeArrow(id, error)}
               />
             );
           })}
           {drawing && 
             <NodeArrow initialPosition={drawing.initialPosition} currentPosition={drawing.currentPosition} incomplete />}
+          {error && <ErrorMessage position={error.position} message={error.msg} duration={1000} removeError={removeError} />}
         </Layer>
       </Stage>
     </div>
