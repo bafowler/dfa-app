@@ -1,11 +1,18 @@
 import './App.css';
-import { useReducer, useRef } from 'react';
+import { useReducer } from 'react';
 import { Stage, Layer } from 'react-konva';
 import { Node, NODE_OUTER_RADIUS, NODE_CLICK_RADIUS } from './Node';
 import NodeArrow from './NodeArrow';
 import NodeMenu from './NodeMenu';
 import ErrorMessage from './ErrorMessage';
 import { withinCircle, getClosestPointOnCircle } from './utils';
+
+const STAGE_HEIGHT = 600;
+const STAGE_WIDTH = 1000;
+const ERROR_POSITION = {
+  x: STAGE_WIDTH / 2,
+  y: 40,
+}
 
 function reducer(state, {type, position, id, nodeType, error }) {
   if (error) {
@@ -74,7 +81,6 @@ const initialState = {
 
 function App() {
   const [{ nodes, arrows, drawing, currentNodeId, error }, dispatch] = useReducer(reducer, initialState);
-  const stageRef = useRef(null);
 
   const handleMouseDown = e => 
     dispatch({ type: 'beginArrow', position: e.target.getStage().getPointerPosition() });
@@ -92,17 +98,16 @@ function App() {
   return (
     <div className="App">
       <Stage 
-        ref={stageRef}
         className="stage" 
         onMouseDown={handleMouseDown} 
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        width={1000} 
-        height={600}
+        width={STAGE_WIDTH} 
+        height={STAGE_HEIGHT}
       >
         <Layer>
           <NodeMenu createNode={createNode} />
-          {error && <ErrorMessage position={error.position} message={error.msg} duration={1000} removeError={removeError} />}
+          {error && <ErrorMessage position={ERROR_POSITION} message={error.msg} removeError={removeError} />}
           {nodes.map(({ id, position, nodeType }) => 
             <Node 
               key={`state-${id}`}

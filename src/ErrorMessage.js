@@ -1,15 +1,24 @@
-import { useEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useEffect, useRef, useState } from 'react';
 import { Text } from 'react-konva';
 
-const ERROR_OFFSET = 15;
+const ERROR_DURATION_MS = 2000;
 
-export default function ErrorMessage({ duration, message, position, removeError }) {
+export default function ErrorMessage({ message, position, removeError }) {
   const errorRef = useRef(null);
   const [ fadeIn, setFadeIn ] = useState(true);
+  
+  useLayoutEffect(() => {
+    // Center text in the middle of the arrow
+    if (errorRef.current) {
+      const errorNode = errorRef.current;
+      errorNode.offsetX(errorNode.width() / 2);
+      errorNode.offsetY(errorNode.height() / 2);
+    }
+  }, []);
 
   useEffect(() => {
     // Fade error message in and then out
-    const durationInSeconds = duration / 1000;
+    const durationInSeconds = ERROR_DURATION_MS / 1000;
 
     if (errorRef.current) {
       if (fadeIn) {
@@ -17,22 +26,22 @@ export default function ErrorMessage({ duration, message, position, removeError 
           opacity: 1,
           duration: durationInSeconds / 2,
         });
-        setTimeout(() => setFadeIn(false), duration / 2);
+        setTimeout(() => setFadeIn(false), ERROR_DURATION_MS / 2);
       } else {
         errorRef.current.to({
           opacity: 0,
           duration: durationInSeconds / 2,
         });
-        setTimeout(() => removeError(), duration / 2);
+        setTimeout(() => removeError(), ERROR_DURATION_MS / 2);
       }
     }
-  }, [ duration, fadeIn, removeError ]);
+  }, [ fadeIn, removeError ]);
 
   return (
     <Text
       ref={errorRef}
-      x={position.x + ERROR_OFFSET}
-      y={position.y + ERROR_OFFSET}
+      x={position.x}
+      y={position.y}
       fontFamily='Gothic A1'
       fontSize={14}
       fill='red'
