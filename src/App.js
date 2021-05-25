@@ -1,81 +1,18 @@
 import './App.css';
 import { useReducer } from 'react';
 import { Stage, Layer } from 'react-konva';
-import { Node, NODE_OUTER_RADIUS, NODE_CLICK_RADIUS } from './Node';
+import { Node, NODE_OUTER_RADIUS } from './Node';
 import NodeArrow from './NodeArrow';
 import NodeMenu from './NodeMenu';
 import ErrorMessage from './ErrorMessage';
-import { withinCircle, getClosestPointOnCircle, isArrowBetweenNodes } from './utils';
+import { reducer } from './reducer';
+import { getClosestPointOnCircle } from './utils';
 
 const STAGE_HEIGHT = 600;
 const STAGE_WIDTH = 1000;
 const ERROR_POSITION = {
   x: STAGE_WIDTH / 2,
   y: 40,
-}
-
-function reducer(state, {type, position, id, nodeType, errorMsg }) {
-  if (errorMsg) {
-    state.errorMsg = errorMsg;
-  }
-
-  switch(type) {
-    case 'beginArrow':
-      const newArrow = {
-        id: state.currentArrowId + 1,
-        initialPosition: position,
-        currentPosition: position,
-      };
-
-      return { ...state, drawing: newArrow };
-    case 'continueArrow':
-      if (state.drawing) {
-        const currentArrow = state.drawing;
-        currentArrow.currentPosition = position;
-        return { ...state, drawing: currentArrow };
-      }
-
-      return state;
-    case 'endArrow':
-      if (state.drawing) {
-        const currentArrow = state.drawing;
-        const startNode = state.nodes.find(n => withinCircle(n.position, currentArrow.initialPosition, NODE_CLICK_RADIUS));
-        const endNode = state.nodes.find(n => withinCircle(n.position, currentArrow.currentPosition, NODE_CLICK_RADIUS));
-
-        if (startNode === undefined || endNode === undefined) {
-          return { ...state, drawing: null, errorMsg: 'arrow must connect two states' };
-        } else if (isArrowBetweenNodes(state.arrows, startNode.id, endNode.id)) {
-          return { ...state, drawing: null, errorMsg: `there is already an arrow connecting state ${startNode.id} and state ${endNode.id}` };
-        } else {
-          const newArrow = { 
-            id: currentArrow.id, 
-            startNodeId: startNode.id, 
-            endNodeId: endNode.id 
-          };
-          return { ...state, currentArrowId: newArrow.id, arrows: [...state.arrows, newArrow], drawing: null };
-        }
-      }
-
-      return state;
-    case 'removeArrow':
-      return { ...state, arrows: [ ...state.arrows.filter(a => a.id !== id) ] };
-    case 'moveNode':
-      const node = state.nodes.find(n => n.id === id);
-      node.position = position;
-
-      return { ...state, nodes: [ ...state.nodes.filter(n => n !== node), node ] };
-    case 'createNode':
-      const newNode = { position, id: state.currentNodeId + 1, nodeType };
-
-      return { ...state, nodes: [...state.nodes, newNode ], currentNodeId: newNode.id };
-    case 'addError': 
-      return { ...state, errorMsg };
-    case 'removeError': {
-      return { ...state, errorMsg: null };
-    }
-    default:
-      throw new Error();
-  }
 }
 
 const initialState = {
