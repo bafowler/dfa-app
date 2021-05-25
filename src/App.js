@@ -14,9 +14,9 @@ const ERROR_POSITION = {
   y: 40,
 }
 
-function reducer(state, {type, position, id, nodeType, error }) {
-  if (error) {
-    state.error = error;
+function reducer(state, {type, position, id, nodeType, errorMsg }) {
+  if (errorMsg) {
+    state.errorMsg = errorMsg;
   }
 
   switch(type) {
@@ -47,7 +47,7 @@ function reducer(state, {type, position, id, nodeType, error }) {
           return { ...state, currentArrowId: newArrow.id, arrows: [...state.arrows, newArrow], drawing: null };
         }
 
-        return { ...state, drawing: null };
+        return { ...state, drawing: null, errorMsg: 'arrow must connect two states' };
       }
 
       return state;
@@ -63,9 +63,9 @@ function reducer(state, {type, position, id, nodeType, error }) {
 
       return { ...state, nodes: [...state.nodes, newNode ], currentNodeId: newNode.id };
     case 'addError': 
-      return { ...state, error };
+      return { ...state, errorMsg };
     case 'removeError': {
-      return { ...state, error: null };
+      return { ...state, errorMsg: null };
     }
     default:
       throw new Error();
@@ -80,7 +80,7 @@ const initialState = {
 };
 
 function App() {
-  const [{ nodes, arrows, drawing, currentNodeId, error }, dispatch] = useReducer(reducer, initialState);
+  const [{ nodes, arrows, drawing, currentNodeId, errorMsg }, dispatch] = useReducer(reducer, initialState);
 
   const handleMouseDown = e => 
     dispatch({ type: 'beginArrow', position: e.target.getStage().getPointerPosition() });
@@ -89,10 +89,10 @@ function App() {
   const handleMouseUp = e =>
     dispatch({ type: 'endArrow', position: e.target.getStage().getPointerPosition() });
 
-  const removeArrow = (id, error) => dispatch({ type: 'removeArrow', id, error });
+  const removeArrow = (id, errorMsg) => dispatch({ type: 'removeArrow', id, errorMsg });
   const moveNode = (id, position) => dispatch({ type: 'moveNode', id, position });
   const createNode = (position, nodeType) => dispatch({ type: 'createNode', position, nodeType });
-  const addError = error => dispatch({ type: 'addError', error });
+  const addError = errorMsg => dispatch({ type: 'addError', errorMsg });
   const removeError = () => dispatch({ type: 'removeError' });
 
   return (
@@ -107,7 +107,7 @@ function App() {
       >
         <Layer>
           <NodeMenu createNode={createNode} />
-          {error && <ErrorMessage position={ERROR_POSITION} message={error.msg} removeError={removeError} />}
+          {errorMsg && <ErrorMessage position={ERROR_POSITION} message={errorMsg} removeError={removeError} />}
           {nodes.map(({ id, position, nodeType }) => 
             <Node 
               key={`state-${id}`}
@@ -129,7 +129,7 @@ function App() {
                 key={`arrow-${id}`}
                 initialPosition={initialPosition} 
                 currentPosition={currentPosition} 
-                removeArrow={error => removeArrow(id, error)}
+                removeArrow={errorMsg => removeArrow(id, errorMsg)}
                 addError={addError}
               />
             );

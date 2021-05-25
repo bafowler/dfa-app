@@ -42,14 +42,14 @@ export default function NodeArrowText({ position, removeArrow, addError }) {
     } else if (e.code === 'Digit1' && !values.includes(1)) {
       setValues([ ...values, 1 ]);
     } else {
-      addError({ msg: 'only valid transitions are 0 and 1', position });
+      addError('only valid transitions are 0 and 1');
     }
     return false;
   }
 
   function handleInputBlur() {
     if (values.length === 0) {
-      removeArrow({ msg: 'must select a transition', position });
+      removeArrow('must select a transition');
     } else {
       setEditing(false);
     }
