@@ -8,3 +8,11 @@ export const getClosestPointOnCircle = (center, dest, radius) => {
   return { x: center.x + (radius*(dest.x - center.x) / distance), 
            y: center.y + (radius*(dest.y - center.y) / distance) };
 };
+
+// Return true iff there is an arrow in arrows connecting startNodeId to endNodeId
+export const isArrowBetweenNodes = (arrows, startNodeId, endNodeId) => {
+  if (startNodeId === undefined || endNodeId === undefined) {
+    return false;
+  }
+  return arrows.find(arrow => arrow.startNodeId === startNodeId && arrow.endNodeId === endNodeId);
+}

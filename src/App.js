@@ -5,7 +5,7 @@ import { Node, NODE_OUTER_RADIUS, NODE_CLICK_RADIUS } from './Node';
 import NodeArrow from './NodeArrow';
 import NodeMenu from './NodeMenu';
 import ErrorMessage from './ErrorMessage';
-import { withinCircle, getClosestPointOnCircle } from './utils';
+import { withinCircle, getClosestPointOnCircle, isArrowBetweenNodes } from './utils';
 
 const STAGE_HEIGHT = 600;
 const STAGE_WIDTH = 1000;
@@ -42,12 +42,18 @@ function reducer(state, {type, position, id, nodeType, errorMsg }) {
         const startNode = state.nodes.find(n => withinCircle(n.position, currentArrow.initialPosition, NODE_CLICK_RADIUS));
         const endNode = state.nodes.find(n => withinCircle(n.position, currentArrow.currentPosition, NODE_CLICK_RADIUS));
 
-        if (startNode && endNode) {
-          const newArrow = { id: currentArrow.id, startNodeId: startNode.id, endNodeId: endNode.id };
+        if (startNode === undefined || endNode === undefined) {
+          return { ...state, drawing: null, errorMsg: 'arrow must connect two states' };
+        } else if (isArrowBetweenNodes(state.arrows, startNode.id, endNode.id)) {
+          return { ...state, drawing: null, errorMsg: `there is already an arrow connecting state ${startNode.id} and state ${endNode.id}` };
+        } else {
+          const newArrow = { 
+            id: currentArrow.id, 
+            startNodeId: startNode.id, 
+            endNodeId: endNode.id 
+          };
           return { ...state, currentArrowId: newArrow.id, arrows: [...state.arrows, newArrow], drawing: null };
         }
-
-        return { ...state, drawing: null, errorMsg: 'arrow must connect two states' };
       }
 
       return state;
