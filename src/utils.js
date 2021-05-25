@@ -14,5 +14,5 @@ export const isArrowBetweenNodes = (arrows, startNodeId, endNodeId) => {
   if (startNodeId === undefined || endNodeId === undefined) {
     return false;
   }
-  return arrows.find(arrow => arrow.startNodeId === startNodeId && arrow.endNodeId === endNodeId);
+  return !!arrows.find(arrow => arrow.startNodeId === startNodeId && arrow.endNodeId === endNodeId);
 }

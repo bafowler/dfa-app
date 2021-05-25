@@ -6,7 +6,7 @@ import NodeArrow from './NodeArrow';
 import NodeMenu from './NodeMenu';
 import ErrorMessage from './ErrorMessage';
 import { reducer } from './reducer';
-import { getClosestPointOnCircle } from './utils';
+import { getClosestPointOnCircle, isArrowBetweenNodes } from './utils';
 
 const STAGE_HEIGHT = 600;
 const STAGE_WIDTH = 1000;
@@ -74,6 +74,7 @@ function App() {
                 currentPosition={currentPosition} 
                 removeArrow={errorMsg => removeArrow(id, errorMsg)}
                 addError={addError}
+                curved={isArrowBetweenNodes(arrows, endNodeId, startNodeId)}
               />
             );
           })}
