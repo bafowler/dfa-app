@@ -1,14 +1,29 @@
 const X_AXIS_UNIT_VECTOR = { x: 1, y: 0 };
 
 // Return true iff dest is within the circle defined by center and radius
-export const withinCircle = (center, dest, radius) => (Math.pow(dest.x - center.x, 2) + Math.pow(dest.y - center.y, 2)) < Math.pow(radius, 2);
+export const withinCircle = (center, dest, radius) => 
+  (Math.pow(dest.x - center.x, 2) + Math.pow(dest.y - center.y, 2)) < Math.pow(radius, 2);
 
 // Return the point closest to dest on the circle defined by center and radius 
 export const getClosestPointOnCircle = (center, dest, radius) => {
   const distance = Math.hypot(center.x - dest.x, center.y - dest.y);
 
-  return { x: center.x + (radius*(dest.x - center.x) / distance), 
-           y: center.y + (radius*(dest.y - center.y) / distance) };
+  return { x: center.x + (radius * (dest.x - center.x) / distance), 
+           y: center.y + (radius * (dest.y - center.y) / distance) };
+};
+
+// Return the amount of radians needed to get from the beginning of the circle defined by center to point
+export const getRadiansAroundCircle = (point, center) => 
+  Math.atan2(point.y - center.y, point.x - center.x);
+
+// Return point rotated angle radians around the circle defined by center
+export const rotatePointAlongCircle = (center, point, angle) => {
+  const radius = getDistance(center, point);
+  const rads = getRadiansAroundCircle(point, center, radius);
+  return {
+    x: center.x + radius * Math.cos(rads + angle),
+    y: center.y + radius * Math.sin(rads + angle)
+  };
 };
 
 // Return true iff there is an arrow in arrows connecting startNodeId to endNodeId
@@ -19,9 +34,17 @@ export const isArrowBetweenNodes = (arrows, startNodeId, endNodeId) => {
   return !!arrows.find(arrow => arrow.startNode.id === startNodeId && arrow.endNode.id === endNodeId);
 };
 
+export const getDistance = (p1, p2) => Math.hypot(p2.x - p1.x, p2.y - p1.y);
+
+// Return the midpoint between points p1 and p2
+export const getMidpoint = (p1, p2) => ({
+  x: (p1.x + p2.x) / 2, 
+  y: (p1.y + p2.y) / 2
+});
+
 // Return the vector of length 1 connecting points p1 and p2
 export const getUnitVector = (p1, p2) => {
-  const length = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+  const length = getDistance(p1, p2);
   return {
     x: (p2.x - p1.x) / length,
     y: (p2.y - p1.y) / length

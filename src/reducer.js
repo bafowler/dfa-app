@@ -10,15 +10,9 @@ export const reducer = (state, { type, position, id, nodeType, errorMsg }) => {
       case 'beginArrow':
         return { ...state, ...handleBeginArrow(state.currentArrowId, position) };
       case 'continueArrow':
-        if (state.drawing) {
-          return { ...state, ...handleContinueArrow(state.drawing, position) };
-        }
-        return state;
+        return { ...state, ...handleContinueArrow(state.drawing, position) };
       case 'endArrow':
-        if (state.drawing) {
-          return { ...state, ...handleEndArrow(state.nodes, state.arrows, state.drawing) };
-        }
-        return state;
+        return { ...state, ...handleEndArrow(state.nodes, state.arrows, state.drawing) };
       case 'removeArrow':
         return { ...state, ...handleRemoveArrow(state.arrows, id) };
       case 'createNode':

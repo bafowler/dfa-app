@@ -1,12 +1,13 @@
 import './App.css';
 import { useReducer } from 'react';
 import { Stage, Layer } from 'react-konva';
-import { Node, NODE_OUTER_RADIUS } from './Node';
+import { Node } from './Node';
+import DrawingArrow from './DrawingArrow';
 import NodeArrow from './NodeArrow';
 import NodeMenu from './NodeMenu';
 import ErrorMessage from './ErrorMessage';
 import { reducer } from './reducer';
-import { getClosestPointOnCircle, isArrowBetweenNodes } from './utils';
+import { isArrowBetweenNodes } from './utils';
 
 const STAGE_HEIGHT = 600;
 const STAGE_WIDTH = 1000;
@@ -27,10 +28,10 @@ function App() {
 
   const handleMouseDown = e => 
     dispatch({ type: 'beginArrow', position: e.target.getStage().getPointerPosition() });
-  const handleMouseMove = e =>
-    dispatch({ type: 'continueArrow', position: e.target.getStage().getPointerPosition() });
+  const handleMouseMove = e => 
+    drawing && dispatch({ type: 'continueArrow', position: e.target.getStage().getPointerPosition() });
   const handleMouseUp = e =>
-    dispatch({ type: 'endArrow', position: e.target.getStage().getPointerPosition() });
+    drawing && dispatch({ type: 'endArrow', position: e.target.getStage().getPointerPosition() });
 
   const removeArrow = (id, errorMsg) => dispatch({ type: 'removeArrow', id, errorMsg });
   const moveNode = (id, position) => dispatch({ type: 'moveNode', id, position });
@@ -62,22 +63,17 @@ function App() {
               setPosition={position => moveNode(id, position)} 
             />)
           }
-          {arrows.map(({ id, startNode, endNode }) => {
-            const initialPosition = getClosestPointOnCircle(startNode.position, endNode.position, NODE_OUTER_RADIUS);
-            const currentPosition = getClosestPointOnCircle(endNode.position, startNode.position, NODE_OUTER_RADIUS);
-            return (
-              <NodeArrow 
-                key={`arrow-${id}`}
-                initialPosition={initialPosition} 
-                currentPosition={currentPosition} 
-                removeArrow={errorMsg => removeArrow(id, errorMsg)}
-                addError={addError}
-                curved={isArrowBetweenNodes(arrows, endNode.id, startNode.id)}
-              />
-            );
-          })}
-          {drawing && 
-            <NodeArrow initialPosition={drawing.initialPosition} currentPosition={drawing.currentPosition} incomplete />}
+          {arrows.map(({ id, startNode, endNode }) => (
+            <NodeArrow 
+              key={`arrow-${id}`}
+              startNode={startNode} 
+              endNode={endNode} 
+              removeArrow={errorMsg => removeArrow(id, errorMsg)}
+              addError={addError}
+              curved={isArrowBetweenNodes(arrows, endNode.id, startNode.id)}
+            />
+          ))}
+          {drawing && <DrawingArrow start={drawing.initialPosition} end={drawing.currentPosition} />}
         </Layer>
       </Stage>
     </div>
