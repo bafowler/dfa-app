@@ -64,8 +64,8 @@ const handleEndArrow = (nodes, arrows, drawing) => {
   } else {
     const newArrow = { 
       id: currentArrow.id, 
-      startNodeId: startNode.id, 
-      endNodeId: endNode.id 
+      startNode: startNode, 
+      endNode: endNode
     };
 
     return { currentArrowId: newArrow.id, arrows: [...arrows, newArrow], drawing: null };

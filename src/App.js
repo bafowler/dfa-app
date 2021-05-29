@@ -62,11 +62,9 @@ function App() {
               setPosition={position => moveNode(id, position)} 
             />)
           }
-          {arrows.map(({ id, startNodeId, endNodeId }) => {
-            const startNodeCenter = nodes.find(n => n.id === startNodeId).position;
-            const endNodeCenter = nodes.find(n => n.id === endNodeId).position;
-            const initialPosition = getClosestPointOnCircle(startNodeCenter, endNodeCenter, NODE_OUTER_RADIUS);
-            const currentPosition = getClosestPointOnCircle(endNodeCenter, startNodeCenter, NODE_OUTER_RADIUS);
+          {arrows.map(({ id, startNode, endNode }) => {
+            const initialPosition = getClosestPointOnCircle(startNode.position, endNode.position, NODE_OUTER_RADIUS);
+            const currentPosition = getClosestPointOnCircle(endNode.position, startNode.position, NODE_OUTER_RADIUS);
             return (
               <NodeArrow 
                 key={`arrow-${id}`}
@@ -74,7 +72,7 @@ function App() {
                 currentPosition={currentPosition} 
                 removeArrow={errorMsg => removeArrow(id, errorMsg)}
                 addError={addError}
-                curved={isArrowBetweenNodes(arrows, endNodeId, startNodeId)}
+                curved={isArrowBetweenNodes(arrows, endNode.id, startNode.id)}
               />
             );
           })}

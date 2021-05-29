@@ -16,7 +16,7 @@ export const isArrowBetweenNodes = (arrows, startNodeId, endNodeId) => {
   if (startNodeId === undefined || endNodeId === undefined) {
     return false;
   }
-  return !!arrows.find(arrow => arrow.startNodeId === startNodeId && arrow.endNodeId === endNodeId);
+  return !!arrows.find(arrow => arrow.startNode.id === startNodeId && arrow.endNode.id === endNodeId);
 };
 
 // Return the vector of length 1 connecting points p1 and p2
