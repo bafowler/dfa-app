@@ -31,7 +31,8 @@ export const isArrowBetweenNodes = (arrows, startNodeId, endNodeId) => {
   if (startNodeId === undefined || endNodeId === undefined) {
     return false;
   }
-  return !!arrows.find(arrow => arrow.startNode.id === startNodeId && arrow.endNode.id === endNodeId);
+  return !!arrows.find(({ startNode, endNode }) => 
+    startNode && endNode && startNode.id === startNodeId && endNode.id === endNodeId);
 };
 
 export const getDistance = (p1, p2) => Math.hypot(p2.x - p1.x, p2.y - p1.y);

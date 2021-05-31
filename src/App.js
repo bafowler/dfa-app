@@ -23,6 +23,26 @@ const initialState = {
   currentNodeId: -1,
 };
 
+const getDrawingArrow = (drawingArrow, arrows) => {
+  if (!drawingArrow) {
+    return null;
+  }
+
+  const { startNode, endNode } = drawingArrow;
+  if (startNode && endNode) {
+    return (
+      <NodeArrow 
+        incomplete
+        startNode={startNode} 
+        endNode={endNode} 
+        curved={isArrowBetweenNodes(arrows, endNode.id, startNode.id)}
+      />
+    )
+  }
+
+  return <DrawingArrow start={drawingArrow.initialPosition} end={drawingArrow.currentPosition} />;
+};
+
 function App() {
   const [{ nodes, arrows, drawing, currentNodeId, errorMsg }, dispatch] = useReducer(reducer, initialState);
 
@@ -70,10 +90,10 @@ function App() {
               endNode={endNode} 
               removeArrow={errorMsg => removeArrow(id, errorMsg)}
               addError={addError}
-              curved={isArrowBetweenNodes(arrows, endNode.id, startNode.id)}
+              curved={isArrowBetweenNodes(drawing ? [...arrows, drawing] : arrows, endNode.id, startNode.id)}
             />
           ))}
-          {drawing && <DrawingArrow start={drawing.initialPosition} end={drawing.currentPosition} />}
+          {getDrawingArrow(drawing, arrows)}
         </Layer>
       </Stage>
     </div>

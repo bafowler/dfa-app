@@ -11,7 +11,7 @@ import {
 } from './utils';
 
 const NODE_TEXT_SPACE = 16;
-const CURVE_MULTIPLIER = 40;
+const CURVE_MULTIPLIER = 26;
 const CURVED_ARROW_BUFFER = Math.PI / 8;
 
 const getLineEndAndArrowStart = (textPosition, unitVector, space) => (
@@ -24,7 +24,7 @@ const getLineEndAndArrowStart = (textPosition, unitVector, space) => (
   }]
 );
 
-export default function NodeArrow({ startNode, endNode, curved=false, removeArrow, addError }) {
+export default function NodeArrow({ startNode, endNode, curved=false, incomplete=false, removeArrow, addError }) {
   let start = getClosestPointOnCircle(startNode.position, endNode.position, NODE_OUTER_RADIUS);
   let end = getClosestPointOnCircle(endNode.position, startNode.position, NODE_OUTER_RADIUS);
 
@@ -57,7 +57,7 @@ export default function NodeArrow({ startNode, endNode, curved=false, removeArro
   return (
     <>
       <Line points={linePoints} fill='black' stroke='black' />
-      <NodeArrowText position={textPosition} removeArrow={removeArrow} addError={addError} />
+      {!incomplete && <NodeArrowText position={textPosition} removeArrow={removeArrow} addError={addError} />}
       <Arrow points={arrowPoints} fill='black' stroke='black' />
     </>
   );
