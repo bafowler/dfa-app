@@ -1,4 +1,4 @@
-import { NODE_CLICK_RADIUS, NODE_LOOP_RADIUS_START, NODE_LOOP_RADIUS_END } from './Node';
+import { NODE_CLICK_RADIUS, NODE_LOOP_RADIUS_START, NODE_LOOP_RADIUS_END } from './constants';
 import { withinCircle, isArrowBetweenNodes } from './utils';
 
 const withinLoopRadius = (nodePosition, point) => 

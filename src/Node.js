@@ -1,12 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Group, Circle, Text } from 'react-konva';
 import useCenterText from './useCenterText';
-
-export const NODE_RADIUS = 25;
-export const NODE_OUTER_RADIUS = NODE_RADIUS + 10;
-export const NODE_CLICK_RADIUS = NODE_OUTER_RADIUS + 10;
-export const NODE_LOOP_RADIUS_START = NODE_CLICK_RADIUS * 2;
-export const NODE_LOOP_RADIUS_END = NODE_CLICK_RADIUS * 3;
+import { NODE_RADIUS } from './constants';
 
 const isMouseDown = e => e.evt.buttons === 1;
 

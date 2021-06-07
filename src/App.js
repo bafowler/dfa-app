@@ -9,13 +9,7 @@ import NodeMenu from './NodeMenu';
 import ErrorMessage from './ErrorMessage';
 import { reducer } from './reducer';
 import { isArrowBetweenNodes } from './utils';
-
-const STAGE_HEIGHT = 600;
-const STAGE_WIDTH = 1000;
-const ERROR_POSITION = {
-  x: STAGE_WIDTH / 2,
-  y: 40,
-}
+import { STAGE_HEIGHT, STAGE_WIDTH, ERROR_POSITION } from './constants';
 
 const initialState = {
   arrows: [],

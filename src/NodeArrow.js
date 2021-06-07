@@ -1,5 +1,4 @@
 import { Arrow, Line } from 'react-konva';
-import { NODE_OUTER_RADIUS } from './Node';
 import NodeArrowText from './NodeArrowText';
 import { 
   getClosestPointOnCircle,
@@ -9,10 +8,12 @@ import {
   getUnitVector, 
   rotatePointAlongCircle
 } from './utils';
-
-const NODE_TEXT_SPACE = 16;
-const CURVE_MULTIPLIER = 26;
-const CURVED_ARROW_BUFFER = Math.PI / 8;
+import {
+  ARROW_TEXT_SPACE, 
+  CURVED_ARROW_MULTIPLIER, 
+  CURVED_ARROW_POINT_ROTATION, 
+  NODE_OUTER_RADIUS
+} from './constants';
 
 const getLineEndAndArrowStart = (textPosition, unitVector, space) => (
   [{ 
@@ -29,8 +30,8 @@ export default function NodeArrow({ startNode, endNode, curved=false, incomplete
   let end = getClosestPointOnCircle(endNode.position, startNode.position, NODE_OUTER_RADIUS);
 
   if (curved) {
-    start = rotatePointAlongCircle(startNode.position, start, CURVED_ARROW_BUFFER );
-    end = rotatePointAlongCircle(endNode.position, end, -CURVED_ARROW_BUFFER );
+    start = rotatePointAlongCircle(startNode.position, start, CURVED_ARROW_POINT_ROTATION );
+    end = rotatePointAlongCircle(endNode.position, end, -CURVED_ARROW_POINT_ROTATION );
   }
 
   const midpoint = getMidpoint(start, end);
@@ -41,15 +42,15 @@ export default function NodeArrow({ startNode, endNode, curved=false, incomplete
 
   if (curved) {
     textPosition = {
-      x: midpoint.x + (perpendicularUnitVector.x * CURVE_MULTIPLIER),
-      y: midpoint.y + (perpendicularUnitVector.y * CURVE_MULTIPLIER)
+      x: midpoint.x + (perpendicularUnitVector.x * CURVED_ARROW_MULTIPLIER),
+      y: midpoint.y + (perpendicularUnitVector.y * CURVED_ARROW_MULTIPLIER)
     }; 
-    [ lineEnd, arrowStart ] = getLineEndAndArrowStart(textPosition, unitVector, NODE_TEXT_SPACE);
+    [ lineEnd, arrowStart ] = getLineEndAndArrowStart(textPosition, unitVector, ARROW_TEXT_SPACE);
     linePoints = getPointsOnCurve(start, end, textPosition, start, lineEnd);
     arrowPoints = getPointsOnCurve(start, end, textPosition, arrowStart, end);
   } else {
     textPosition = midpoint;
-    [ lineEnd, arrowStart ] = getLineEndAndArrowStart(textPosition, unitVector, NODE_TEXT_SPACE);
+    [ lineEnd, arrowStart ] = getLineEndAndArrowStart(textPosition, unitVector, ARROW_TEXT_SPACE);
     linePoints = [ start.x, start.y, lineEnd.x, lineEnd.y ];
     arrowPoints = [ arrowStart.x, arrowStart.y, end.x, end.y ];
   }

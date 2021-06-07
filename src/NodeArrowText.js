@@ -3,8 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Text } from 'react-konva';
 import { Html } from 'react-konva-utils';
 import useCenterText from './useCenterText';
-
-const MAX_TEXT_SPACE = 12;
+import { ARROW_TEXT_SPACE as MAX_TEXT_SPACE } from './constants';
 
 export default function NodeArrowText({ position, removeArrow, addError }) {
   const inputRef = useRef(null);
