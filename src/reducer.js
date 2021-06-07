@@ -47,18 +47,20 @@ const handleBeginArrow = (nodes, currentArrowId, position) => {
 const handleContinueArrow = (nodes, drawing, position) => {
   const currentArrow = drawing;
   currentArrow.currentPosition = position;
-  
-  const endNode = nodes.find(n => withinCircle(n.position, position, NODE_CLICK_RADIUS));
-  if (currentArrow.startNode !== endNode) {
-    currentArrow.endNode = endNode;
-  } 
 
-  if (withinLoopRadius(currentArrow.startNode.position, position)) {
-    currentArrow.endNode = currentArrow.startNode;
-    currentArrow.relativeAnchor = {
-      x: currentArrow.currentPosition.x - currentArrow.startNode.position.x,
-      y: currentArrow.currentPosition.y - currentArrow.startNode.position.y,
-    };
+  if (currentArrow.startNode) {
+    const endNode = nodes.find(n => withinCircle(n.position, position, NODE_CLICK_RADIUS));
+    if (currentArrow.startNode !== endNode) {
+      currentArrow.endNode = endNode;
+    } 
+
+    if (withinLoopRadius(currentArrow.startNode.position, position)) {
+      currentArrow.endNode = currentArrow.startNode;
+      currentArrow.relativeAnchor = {
+        x: currentArrow.currentPosition.x - currentArrow.startNode.position.x,
+        y: currentArrow.currentPosition.y - currentArrow.startNode.position.y,
+      };
+    }
   }
 
   return { drawing: currentArrow };

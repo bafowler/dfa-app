@@ -21,27 +21,27 @@ export default function NodeLoop({ node, relativeAnchor, incomplete=false, remov
   };
 
   const closestPoint = getClosestPointOnCircle(node.position, anchor, NODE_OUTER_RADIUS);
-  const start = rotatePointAlongCircle(node.position, closestPoint, CURVED_ARROW_BUFFER );
-  const end = rotatePointAlongCircle(node.position, closestPoint, -CURVED_ARROW_BUFFER );
+  const start = rotatePointAlongCircle(node.position, closestPoint, -CURVED_ARROW_BUFFER );
+  const end = rotatePointAlongCircle(node.position, closestPoint, CURVED_ARROW_BUFFER );
   const midpoint = getMidpoint(closestPoint, anchor);
   const unitVector = getUnitVector(closestPoint, anchor);
   const perpendicularUnitVector = getPerpendicularVector(unitVector);
 
   const curveOneApex = {
-    x: midpoint.x + (perpendicularUnitVector.x * CURVE_MULTIPLIER),
-    y: midpoint.y + (perpendicularUnitVector.y * CURVE_MULTIPLIER)
-  }; 
-  const curveTwoApex = {
     x: midpoint.x - (perpendicularUnitVector.x * CURVE_MULTIPLIER),
     y: midpoint.y - (perpendicularUnitVector.y * CURVE_MULTIPLIER)
+  }; 
+  const curveTwoApex = {
+    x: midpoint.x + (perpendicularUnitVector.x * CURVE_MULTIPLIER),
+    y: midpoint.y + (perpendicularUnitVector.y * CURVE_MULTIPLIER)
   };
   const lineEnd = {
-    x: anchor.x + (perpendicularUnitVector.x * NODE_TEXT_SPACE),
-    y: anchor.y + (perpendicularUnitVector.y * NODE_TEXT_SPACE),
-  };
-  const arrowStart = {
     x: anchor.x - (perpendicularUnitVector.x * NODE_TEXT_SPACE),
     y: anchor.y - (perpendicularUnitVector.y * NODE_TEXT_SPACE),
+  };
+  const arrowStart = {
+    x: anchor.x + (perpendicularUnitVector.x * NODE_TEXT_SPACE),
+    y: anchor.y + (perpendicularUnitVector.y * NODE_TEXT_SPACE),
   };
 
   return (
