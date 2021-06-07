@@ -5,6 +5,8 @@ import useCenterText from './useCenterText';
 export const NODE_RADIUS = 25;
 export const NODE_OUTER_RADIUS = NODE_RADIUS + 10;
 export const NODE_CLICK_RADIUS = NODE_OUTER_RADIUS + 10;
+export const NODE_LOOP_RADIUS_START = NODE_CLICK_RADIUS * 2;
+export const NODE_LOOP_RADIUS_END = NODE_CLICK_RADIUS * 3;
 
 const isMouseDown = e => e.evt.buttons === 1;
 

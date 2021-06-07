@@ -1,5 +1,9 @@
-import { NODE_CLICK_RADIUS } from './Node';
+import { NODE_CLICK_RADIUS, NODE_LOOP_RADIUS_START, NODE_LOOP_RADIUS_END } from './Node';
 import { withinCircle, isArrowBetweenNodes } from './utils';
+
+const withinLoopRadius = (nodePosition, point) => 
+  withinCircle(nodePosition, point, NODE_LOOP_RADIUS_END) && 
+  !withinCircle(nodePosition, point, NODE_LOOP_RADIUS_START);
 
 export const reducer = (state, { type, position, id, nodeType, errorMsg }) => {
     if (errorMsg) {
@@ -47,6 +51,14 @@ const handleContinueArrow = (nodes, drawing, position) => {
   const endNode = nodes.find(n => withinCircle(n.position, position, NODE_CLICK_RADIUS));
   if (currentArrow.startNode !== endNode) {
     currentArrow.endNode = endNode;
+  } 
+
+  if (withinLoopRadius(currentArrow.startNode.position, position)) {
+    currentArrow.endNode = currentArrow.startNode;
+    currentArrow.relativeAnchor = {
+      x: currentArrow.currentPosition.x - currentArrow.startNode.position.x,
+      y: currentArrow.currentPosition.y - currentArrow.startNode.position.y,
+    };
   }
 
   return { drawing: currentArrow };
@@ -58,11 +70,11 @@ const handleEndArrow = (arrows, drawing) => {
 
   if (startNode === undefined || endNode === undefined) {
     return { drawing: null, errorMsg: 'arrow must connect two states' };
-  } else if (isArrowBetweenNodes(arrows, startNode.id, endNode.id)) {
+  } 
+  if (isArrowBetweenNodes(arrows, startNode.id, endNode.id)) {
     return { drawing: null, errorMsg: `there is already an arrow connecting state ${startNode.id} and state ${endNode.id}` };
-  } else {
-    return { currentArrowId: currentArrow.id, arrows: [...arrows, currentArrow], drawing: null };
   }
+  return { currentArrowId: currentArrow.id, arrows: [...arrows, currentArrow], drawing: null };
 };
 
 const handleRemoveArrow = (arrows, arrowId) => ({ arrows: [ ...arrows.filter(a => a.id !== arrowId) ]});
