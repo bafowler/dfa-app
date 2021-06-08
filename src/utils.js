@@ -2,7 +2,7 @@ const X_AXIS_UNIT_VECTOR = { x: 1, y: 0 };
 
 // Return true iff dest is within the circle defined by center and radius
 export const withinCircle = (center, dest, radius) => 
-  (Math.pow(dest.x - center.x, 2) + Math.pow(dest.y - center.y, 2)) < Math.pow(radius, 2);
+  (dest.x - center.x) ** 2 + (dest.y - center.y) ** 2 < radius ** 2;
 
 // Return the point closest to dest on the circle defined by center and radius 
 export const getClosestPointOnCircle = (center, dest, radius) => {
@@ -86,8 +86,8 @@ export const getRotatedPointInStandardAxis = (point, angle) => ({
 
 // Return the parabolic function defined by vertex and point
 export const getParabola = (point, vertex) => {
-  const a = (point.y - vertex.y) / Math.pow(point.x - vertex.x, 2);
-  return x => a * Math.pow(x - vertex.x, 2) + vertex.y;
+  const a = (point.y - vertex.y) / (point.x - vertex.x) ** 2;
+  return x => a * (x - vertex.x) ** 2 + vertex.y;
 };
 
 // Return an array of points between pointsStart and pointsEnd 
