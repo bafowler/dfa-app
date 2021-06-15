@@ -14,8 +14,9 @@ import {
   CURVED_ARROW_POINT_ROTATION, 
   NODE_OUTER_RADIUS
 } from './constants';
+import { NodeType, Position, Vector } from './types';
 
-const getLineEndAndArrowStart = (textPosition, unitVector, space) => (
+const getLineEndAndArrowStart = (textPosition: Position, unitVector: Vector, space: number) => (
   [{ 
     x: textPosition.x - (unitVector.x * space), 
     y: textPosition.y - (unitVector.y * space) 
@@ -25,7 +26,17 @@ const getLineEndAndArrowStart = (textPosition, unitVector, space) => (
   }]
 );
 
-export default function NodeArrow({ startNode, endNode, curved=false, incomplete=false, removeArrow, addError }) {
+interface NodeArrowProps {
+  startNode: NodeType;
+  endNode: NodeType;
+  curved?: boolean;
+  incomplete?: boolean;
+  removeArrow?: (errorMsg: string) => void;
+  addError?: (errorMsg: string) => void;
+}
+
+
+export default function NodeArrow({ startNode, endNode, curved=false, incomplete=false, removeArrow, addError }: NodeArrowProps) {
   let start = getClosestPointOnCircle(startNode.position, endNode.position, NODE_OUTER_RADIUS);
   let end = getClosestPointOnCircle(endNode.position, startNode.position, NODE_OUTER_RADIUS);
 
@@ -58,7 +69,7 @@ export default function NodeArrow({ startNode, endNode, curved=false, incomplete
   return (
     <>
       <Line points={linePoints} fill='black' stroke='black' />
-      {!incomplete && <NodeArrowText position={textPosition} removeArrow={removeArrow} addError={addError} />}
+      {!incomplete && removeArrow && addError && <NodeArrowText position={textPosition} removeArrow={removeArrow} addError={addError} />}
       <Arrow points={arrowPoints} fill='black' stroke='black' />
     </>
   );

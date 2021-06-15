@@ -1,14 +1,22 @@
 import './App.css';
 import { useEffect, useRef, useState } from 'react';
 import { Text } from 'react-konva';
+// @ts-ignore
 import { Html } from 'react-konva-utils';
 import useCenterText from './useCenterText';
 import { ARROW_TEXT_SPACE as MAX_TEXT_SPACE } from './constants';
+import { Position } from './types';
 
-export default function NodeArrowText({ position, removeArrow, addError }) {
-  const inputRef = useRef(null);
+interface NodeArrowTextProps {
+  position: Position;
+  removeArrow: (errorMsg: string) => void;
+  addError: (errorMsg: string) => void;
+}
+
+export default function NodeArrowText({ position, removeArrow, addError }: NodeArrowTextProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
   const [ editing, setEditing ] = useState(true);
-  const [ values, setValues ] = useState([]);
+  const [ values, setValues ] = useState<number[]>([]);
   const [ , setTextRef ] = useCenterText(!editing);
 
   useEffect(() => {
@@ -29,9 +37,9 @@ export default function NodeArrowText({ position, removeArrow, addError }) {
     }
   }, [editing, position]);
 
-  function handleKeyDown(e) {
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.code === 'Enter' || e.code === 'Escape') {
-      e.target.blur();
+      (e.target as HTMLInputElement).blur();
     } else if (e.code === 'Backspace') {
       const newValues = [...values];
       newValues.pop();

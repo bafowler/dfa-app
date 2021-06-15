@@ -14,8 +14,17 @@ import {
   CURVED_ARROW_POINT_ROTATION, 
   NODE_OUTER_RADIUS
 } from './constants';
+import { NodeType, Position } from './types';
 
-export default function NodeLoop({ node, relativeAnchor, incomplete=false, removeArrow, addError }) {
+interface NodeLoopProps {
+  node: NodeType;
+  relativeAnchor: Position;
+  incomplete?: boolean;
+  removeArrow?: (errorMsg: string) => void;
+  addError?: (errorMsg: string) => void;
+}
+
+export default function NodeLoop({ node, relativeAnchor, incomplete=false, removeArrow, addError }: NodeLoopProps) {
   const anchor = {
     x: node.position.x + relativeAnchor.x,
     y: node.position.y + relativeAnchor.y,
@@ -48,7 +57,7 @@ export default function NodeLoop({ node, relativeAnchor, incomplete=false, remov
   return (
     <>
       <Line points={getPointsOnCurve(start, lineEnd, curveOneApex, start, lineEnd)} fill='black' stroke='black' />
-      {!incomplete && <NodeArrowText position={anchor} removeArrow={removeArrow} addError={addError} />}
+      {!incomplete && removeArrow && addError && <NodeArrowText position={anchor} removeArrow={removeArrow} addError={addError} />}
       <Arrow points={getPointsOnCurve(arrowStart, end, curveTwoApex, arrowStart, end)} fill='black' stroke='black' />
     </>
   );

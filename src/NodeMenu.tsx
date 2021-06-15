@@ -1,5 +1,6 @@
 import { Rect, Text, Group } from 'react-konva';
 import { Node } from './Node';
+import { NodeVariant, Position } from './types';
 
 const NODE_MENU_HEIGHT = 80;
 const NODE_MENU_WIDTH = 180;
@@ -13,7 +14,11 @@ const NODE_MENU_POSITION = {
   y: 20,
 };
 
-export default function NodeMenu({ createNode }) {
+interface NodeMenuProps {
+  createNode: (type: NodeVariant, position?: Position) => void;
+}
+
+export default function NodeMenu({ createNode }: NodeMenuProps) {
   return (
     <Group
       x={NODE_MENU_GROUP_POSITION.x}
@@ -29,12 +34,12 @@ export default function NodeMenu({ createNode }) {
         cornerRadius={10}
       />
       <Node 
-        onClick={e => createNode(e.target.getStage().getPointerPosition(), 'default')}
+        onClick={e => createNode('default', e.target?.getStage()?.getPointerPosition() ?? undefined)}
         position={{ x: NODE_MENU_PADDING, y: NODE_MENU_HEIGHT - NODE_MENU_POSITION.y}}
         isDraggable={false}
       />
       <Node 
-        onClick={e => createNode(e.target.getStage().getPointerPosition(), 'accept')}
+        onClick={e => createNode('accept', e.target?.getStage()?.getPointerPosition() ?? undefined)}
         position={{ x: NODE_MENU_WIDTH - NODE_MENU_PADDING, y: NODE_MENU_HEIGHT - NODE_MENU_POSITION.y}}
         isDraggable={false}
         type='accept'

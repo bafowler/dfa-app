@@ -1,6 +1,12 @@
 import { Arrow } from 'react-konva';
+import { Position } from './types';
 
-const DrawingArrow = ({ start, end} ) => (
+interface DrawingArrowProps {
+  start: Position;
+  end: Position;
+}
+
+const DrawingArrow = ({ start, end }: DrawingArrowProps ) => (
   <Arrow 
     points={[ start.x, start.y, end.x, end.y ]} 
     fill='black' 
